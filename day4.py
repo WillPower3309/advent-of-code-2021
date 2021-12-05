@@ -1,8 +1,6 @@
-BOARD_SIZE = 5
+import copy
 
-##################
-# PART ONE
-##################
+BOARD_SIZE = 5
 
 class BVector: # board vector
     def __init__(self, inputVals: []) -> None:
@@ -33,11 +31,11 @@ class Board:
             self.cols.append(BVector([row[i] for row in inputRows]))
 
     def check(self, val: str) -> bool:
-        isFinished = False
+        isFound = False
         for i in range(BOARD_SIZE):
             if self.rows[i].check(val) or self.cols[i].check(val):
-                isFinished = True
-        return isFinished
+                isFound = True
+        return isFound
 
     def getUnmarkedSum(self) -> int:
         sum = 0
@@ -63,10 +61,43 @@ while buffer:
         currBoardRows.append(row)
     buffer = f.readline()
 
-# check for bingo
-for num in numbers:
-    for board in boards:
-        if board.check(num):
-            print('Part One Solution: %d' % (board.getUnmarkedSum() * int(num)))
-            exit()
+if len(currBoardRows) == BOARD_SIZE: # if input didnt end with \n
+    boards.append(Board(currBoardRows))
+
+##################
+# PART ONE
+##################
+
+def computeBingo(numbers, boards) -> int:
+    for num in numbers:
+        for board in boards:
+            if board.check(num):
+                return board.getUnmarkedSum() * int(num)
+    return 0
+
+# pass deepcopied array to avoid pass by reference
+# this lets the list of boards be reused for part two
+print('Part One Solution: %d' % computeBingo(numbers, copy.deepcopy(boards)))
+
+##################
+# PART TWO
+##################
+
+def computeLastBingo(numbers, boards) -> int:
+    numBoards = len(boards)
+    for num in numbers:
+        boardsToPop = []
+        for i in range(numBoards):
+            if boards[i].check(num):
+                if numBoards == 1:
+                    return(boards[i].getUnmarkedSum() * int(num))
+                boardsToPop.append(i)
+
+        for index in reversed(boardsToPop):
+            boards.pop(index)
+            numBoards -= 1
+
+    return 0
+
+print('Part Two Solution: %d' % (computeLastBingo(numbers, boards)))
 
