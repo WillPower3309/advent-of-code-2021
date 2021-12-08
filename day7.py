@@ -9,11 +9,11 @@ numVals = len(vals)
 # PART ONE
 ##################
 
-currFuel = sum(vals) # start at 0
+currFuel = sum(x - vals[0] for x in vals)
 leastFuel = currFuel
-valsIndex = 0
+valsIndex = 1
 
-for pos in range(1, vals[numVals - 1]):
+for pos in range(vals[0] + 1, vals[numVals - 1]):
     numEqual = 0
     while vals[valsIndex] < pos:
         valsIndex += 1
